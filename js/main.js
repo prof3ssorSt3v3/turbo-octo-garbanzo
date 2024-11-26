@@ -1,3 +1,4 @@
+//VERSION ONE - use an object literal
 function buildLiteral() {
   let parent = document.getElementById('literals');
   let obj = {
@@ -9,11 +10,17 @@ function buildLiteral() {
   obj.constructor.prototype.someMethodBL = function () {
     //adding to Object.prototype
     console.log('called some method from inside buildLiteral');
+    console.log(this);
+    console.log(this.constructor); // Object()
+    console.log(this.constructor.name); // Object
+    console.log(typeof this); // object
+    console.log(this.toString()); // [object Object]
   };
   parent.textContent = JSON.stringify(obj, null, 2);
   obj.someMethodBL();
 }
 
+//VERSION TWO use `new` to call a function to build the object
 function buildWithConstructor() {
   let parent = document.getElementById('constructors');
   // let obj = new Object();
@@ -21,6 +28,11 @@ function buildWithConstructor() {
   let obj = new MyObj(123, 'steve', 'steve@work.org');
   MyObj.prototype.someMethodBWCon = function () {
     console.log('called some method from inside buildWithConstructor');
+    console.log(this);
+    console.log(this.constructor); // MyObj()
+    console.log(this.constructor.name); // MyObj
+    console.log(typeof this); //object
+    console.log(this.toString()); // [object Object]
   };
   parent.textContent = JSON.stringify(obj, null, 2);
   obj.someMethodBWCon();
@@ -33,6 +45,7 @@ function MyObj(id, name, email) {
   // no need for return when called with new
 }
 
+//VERSION THREE - use the Object.create method added in ES5
 function buildWithCreate() {
   let parent = document.getElementById('creates');
   //create wants property descriptors
@@ -56,16 +69,27 @@ function buildWithCreate() {
   obj.constructor.prototype.someMethodBWCreate = function () {
     //adding to Object.prototype
     console.log('called some method from inside buildWithCreate');
+    console.log(this);
+    console.log(this.constructor); // Object()
+    console.log(this.constructor.name); // Object
+    console.log(typeof this); // object
+    console.log(this.toString()); // [object Object]
   };
   parent.textContent = JSON.stringify(obj, null, 2);
   obj.someMethodBWCreate();
 }
 
+//VERSION FOUR - Use JS Class syntax added in ES6
 function buildWithClass() {
   let parent = document.getElementById('classes');
   let obj = new MyObjClass(123, 'steve', 'steve@work.org');
   MyObjClass.prototype.someMethodBWClass = function () {
     console.log('called some method from inside buildWithClass');
+    console.log(this);
+    console.log(this.constructor); // MyObjClass()
+    console.log(this.constructor.name); // MyObjClass
+    console.log(typeof this); // object
+    console.log(this.toString()); // [object Object]
   };
   parent.textContent = JSON.stringify(obj, null, 2);
   obj.someMethodBWClass();
@@ -84,6 +108,7 @@ class MyObjClass extends Object {
   }
 }
 
+//WHEN PAGE LOADS RUN THE FOLLOWING
 (() => {
   //page has loaded
   buildLiteral();
@@ -103,8 +128,14 @@ class MyObjClass extends Object {
   console.groupEnd('MyObj.prototype');
   console.group('MyObjClass.prototype');
   for (let prop of Object.getOwnPropertyNames(MyObjClass.prototype)) {
-    console.log(prop);
-    // console.log(MyObjClass.prototype[prop]);
+    console.log(prop); // name of the property
+    // console.log(MyObjClass.prototype[prop]); //the actual property
   }
   console.groupEnd('MyObjClass.prototype');
+
+  console.log(MyObj.prototype === Object.prototype); //false
+  console.log(MyObj.prototype.__proto__ === Object.prototype); //true
+  //REMEMBER. FUNCTIONS have a prototype prop BUT OBJECTS have a __proto__ prop
+  console.log(MyObjClass.prototype === Object.prototype); //false
+  console.log(MyObjClass.prototype.__proto__ === Object.prototype); //true
 })();
