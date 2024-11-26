@@ -8,6 +8,12 @@
 
 function buildLiteral() {
   let parent = document.getElementById('literals');
+  let obj = {
+    id: 123,
+    name: 'steve',
+    email: 'steve@work.org',
+  };
+  parent.textContent = JSON.stringify(obj, null, 2);
 }
 
 function buildWithConstructor() {
